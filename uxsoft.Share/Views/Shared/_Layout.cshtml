@@ -32,8 +32,6 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
@@ -43,13 +41,14 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2016 - uxsoft.Share</p>
+            <p>&copy; 2016 - uxsoft.cz</p>
         </footer>
     </div>
 
     <environment names="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/dropzone/dist/dropzone.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
@@ -61,6 +60,7 @@
                 asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
         </script>
+        <script src="~/lib/dropzone/dist/min/dropzone.min.js"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 

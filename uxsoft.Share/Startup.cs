@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using uxsoft.Share.Data;
 using uxsoft.Share.Models;
 using uxsoft.Share.Services;
 
@@ -23,6 +22,11 @@ namespace uxsoft.Share
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            using (var db = new ApplicationDbContext())
+            {
+                db.Database.EnsureCreated();
+            }
 
             if (env.IsDevelopment())
             {
@@ -45,8 +49,9 @@ namespace uxsoft.Share
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services
+                .AddEntityFrameworkSqlite()
+                .AddDbContext<ApplicationDbContext>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -84,7 +89,11 @@ namespace uxsoft.Share
 
             app.UseIdentity();
 
-            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+            app.UseFacebookAuthentication(new FacebookOptions()
+            {
+                AppId = Configuration["Authentication:Facebook:AppId"],
+                AppSecret = Configuration["Authentication:Facebook:AppSecret"]
+            });
 
             app.UseMvc(routes =>
             {
