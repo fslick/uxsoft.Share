@@ -3,19 +3,26 @@
     ViewData["Title"] = "Home";
 }
 
-<table>
+
+
+<form asp-action="Upload" asp-controller="Home" asp-antiforgery="true" class="dropzone" id="dropzone">
+       
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>File</th>
+        </tr>
+    </thead>
     <tbody>
         @foreach (var file in Model.Files)
         {
             <tr>
                 <td>
-                    @file
+                    <a asp-action="Download" asp-route-id="@file" asp-protocol="https">@file</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
-<form asp-action="Upload" asp-controller="Home" asp-antiforgery="true" class="dropzone well" id="form-dropzone">
-       
-</form>

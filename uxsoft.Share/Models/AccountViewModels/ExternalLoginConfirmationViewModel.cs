@@ -11,5 +11,10 @@ namespace uxsoft.Share.Models.AccountViewModels
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
+        [RegularExpression("^[A-z0-9_\\.-]{2,16}$")]
+        [Display(Name = "Username")]
+        public string UserName { get; set; }
     }
 }

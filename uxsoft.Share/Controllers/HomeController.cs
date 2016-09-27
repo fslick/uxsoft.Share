@@ -7,6 +7,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using uxsoft.Share.Models.HomeViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace uxsoft.Share.Controllers
 {
@@ -23,14 +24,15 @@ namespace uxsoft.Share.Controllers
             var name = HttpContext.User.Identity.Name;
             if (string.IsNullOrWhiteSpace(name))
                 return null;
-            
+
             var path = Path.Combine(Hosting.WebRootPath, "uploads", name);
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
             return path;
         }
-
+        
+        [Authorize]
         public IActionResult Index()
         {
             var vm = new IndexViewModel();
@@ -38,7 +40,7 @@ namespace uxsoft.Share.Controllers
             var pwd = GetUserDirectory();
             if (!string.IsNullOrWhiteSpace(pwd))
             {
-                vm.Files = Directory.EnumerateFiles(pwd);
+                vm.Files = Directory.EnumerateFiles(pwd).Select(f => Path.GetFileName(f));
             }
             return View(vm);
         }
@@ -47,17 +49,35 @@ namespace uxsoft.Share.Controllers
         public async Task<IActionResult> Upload()
         {
             var uploads = GetUserDirectory();
-            foreach (var file in Request.Form.Files)
+            if (!string.IsNullOrWhiteSpace(uploads))
             {
-                if (file.Length > 0)
+                foreach (var file in Request.Form.Files)
                 {
-                    using (var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create))
+                    if (file.Length > 0)
                     {
-                        await file.CopyToAsync(fileStream);
+                        using (var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
                     }
                 }
+                return Json(new { Message = "Success" });
             }
-            return NoContent();
+            else return StatusCode(400);
+        }
+
+        public IActionResult Download(string id)
+        {
+            var uploads = GetUserDirectory();
+            if (string.IsNullOrWhiteSpace(uploads))
+                return NoContent();
+
+            var file = Path.Combine(uploads, id);
+            if (!System.IO.File.Exists(file))
+                return NoContent();
+
+
+            return File(new FileStream(file, FileMode.Open), "application/octet-stream");
         }
     }
 }
