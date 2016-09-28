@@ -59,7 +59,19 @@ namespace uxsoft.Share
 
             services.AddMvc();
 
+            // Options
+            services.AddOptions();
+
+            services.Configure<uxsoftShareOptions>(options => 
+            {
+                options.AdministratorEmail = Configuration["AdministratorEmail"];
+                options.ServiceEmail = Configuration["ServiceEmail"];
+            });
+
             // Add application services.
+            services.AddSingleton(new SendGrid(
+                apiKey: Configuration["Authentication:SendGrid:ApiKey"],
+                apiUrl: Configuration["Authentication:SendGrid:ApiUrl"]));
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
         }

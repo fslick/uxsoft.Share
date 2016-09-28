@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  uxsoft.share:
+    image: user/uxsoft.share${TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80"

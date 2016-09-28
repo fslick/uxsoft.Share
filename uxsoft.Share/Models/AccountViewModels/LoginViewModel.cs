@@ -9,8 +9,9 @@ namespace uxsoft.Share.Models.AccountViewModels
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        [RegularExpression("^[A-z0-9_\\.-]{2,16}$")]
+        [Display(Name = "Username")]
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

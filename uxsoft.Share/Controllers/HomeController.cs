@@ -45,6 +45,7 @@ namespace uxsoft.Share.Controllers
             return View(vm);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Upload()
         {
@@ -66,6 +67,15 @@ namespace uxsoft.Share.Controllers
             else return StatusCode(400);
         }
 
+        [Authorize]
+        public IActionResult DeleteFile(string id)
+        {
+            var uploads = GetUserDirectory();
+            System.IO.File.Delete(Path.Combine(uploads, id));
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize]
         public IActionResult Download(string id)
         {
             var uploads = GetUserDirectory();

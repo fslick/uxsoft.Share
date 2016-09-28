@@ -7,6 +7,6 @@ namespace uxsoft.Share.Services
 {
     public interface IEmailSender
     {
-        Task SendEmailAsync(string email, string subject, string message);
+        Task SendEmailAsync(string from, string to, string subject, string message);
     }
 }

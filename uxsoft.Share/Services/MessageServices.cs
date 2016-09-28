@@ -10,10 +10,16 @@ namespace uxsoft.Share.Services
     // For more details see this link http://go.microsoft.com/fwlink/?LinkID=532713
     public class AuthMessageSender : IEmailSender, ISmsSender
     {
-        public Task SendEmailAsync(string email, string subject, string message)
+        public AuthMessageSender(SendGrid sg)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            this.SendGrid = sg;
+        }
+
+        private SendGrid SendGrid { get; set; }
+
+        public async Task SendEmailAsync(string from, string to, string subject, string message)
+        {
+            await SendGrid.SendMail(from, to, subject, "text/html", message);
         }
 
         public Task SendSmsAsync(string number, string message)
